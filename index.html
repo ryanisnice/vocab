@@ -19,19 +19,29 @@
 
   <div class="app-container">
     <!-- Header -->
-    <header class="glass-panel">
+    <header class="glass-panel" style="flex-wrap: wrap; gap: 1rem;">
       <div class="brand">
         <div class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
         <h1>VocabBooster</h1>
       </div>
-      <div class="user-status">
-        <div class="status-pill" id="streak-display">
-          <i class="fa-solid fa-fire"></i>
-          <span>連續學習 0 天</span>
-        </div>
-        <div class="status-pill success-pill" id="score-display">
-          <i class="fa-solid fa-circle-check"></i>
-          <span>熟練度 0%</span>
+      <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+        <select id="plan-select" class="plan-dropdown">
+          <option value="short">🟢 短期核心 (300字)</option>
+          <option value="medium">🟡 中期進階 (300字)</option>
+          <option value="long">🟣 長期商務 (300字)</option>
+        </select>
+        <div class="user-status">
+          <div class="status-pill" id="streak-display">
+            <i class="fa-solid fa-fire"></i>
+            <span>連續學習 0 天</span>
+          </div>
+          <div class="status-pill success-pill" id="score-display">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>熟練度 0%</span>
+            <button id="reset-progress-btn" class="reset-btn" title="重置本計畫進度">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+          </div>
         </div>
       </div>
     </header>

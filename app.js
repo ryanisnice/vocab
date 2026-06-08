@@ -1,5 +1,6 @@
 // State Management
 let state = {
+  currentPlan: 'short',
   currentCategory: 'all',
   currentWordIndex: 0,
   filteredWords: [],
@@ -31,6 +32,8 @@ const elements = {
   streakDisplay: document.getElementById('streak-display'),
   scoreDisplay: document.getElementById('score-display'),
   toast: document.getElementById('toast-msg'),
+  planSelect: document.getElementById('plan-select'),
+  resetProgressBtn: document.getElementById('reset-progress-btn'),
 
   // Dashboard Tab
   mainCard: document.getElementById('main-vocab-card'),
@@ -119,6 +122,13 @@ function loadLocalStorage() {
   }
   state.lastLearnDate = localStorage.getItem('vocab_last_learn_date');
 
+  // Plan
+  const savedPlan = localStorage.getItem('vocab_current_plan');
+  if (savedPlan) {
+    state.currentPlan = savedPlan;
+    elements.planSelect.value = savedPlan;
+  }
+
   // Mastery Stats
   const savedSpellingCorrect = localStorage.getItem('vocab_correct_spelling');
   if (savedSpellingCorrect) {
@@ -171,16 +181,17 @@ function updateStreak() {
 }
 
 // Calculate overall vocabulary mastery percentage
-function updateMasteryUI() {
-  const totalWords = VOCAB_DATABASE.length;
-  // A word is mastered if it is correctly answered in BOTH spelling and multiple choice quizzes
-  const masteredCount = VOCAB_DATABASE.filter(w => 
-    state.correctSpellingWords.has(w.word) || state.correctQuizWords.has(w.word)
-  ).length;
-
-  state.masteryPercentage = Math.round((masteredCount / totalWords) * 100);
-  elements.scoreDisplay.querySelector('span').textContent = `熟練度 ${state.masteryPercentage}%`;
-}
+  function updateMasteryUI() {
+    const planWords = VOCAB_DATABASE.filter(w => w.plan === state.currentPlan);
+    const totalWords = planWords.length;
+    // A word is mastered if it is correctly answered in BOTH spelling and multiple choice quizzes
+    const masteredCount = planWords.filter(w => 
+      state.correctSpellingWords.has(w.word) || state.correctQuizWords.has(w.word)
+    ).length;
+  
+    state.masteryPercentage = totalWords > 0 ? Math.round((masteredCount / totalWords) * 100) : 0;
+    elements.scoreDisplay.querySelector('span').textContent = `熟練度 ${state.masteryPercentage}%`;
+  }
 
 // Text to Speech (TTS)
 function speak(text) {
@@ -202,12 +213,15 @@ function speak(text) {
   }
 }
 
-// Filter vocabulary words based on chosen category
+// Filter vocabulary words based on chosen category and plan
 function filterVocabulary() {
+  // Filter by active plan first
+  let tempWords = VOCAB_DATABASE.filter(w => w.plan === state.currentPlan);
+  
   if (state.currentCategory === 'all') {
-    state.filteredWords = [...VOCAB_DATABASE];
+    state.filteredWords = tempWords;
   } else {
-    state.filteredWords = VOCAB_DATABASE.filter(w => w.category === state.currentCategory);
+    state.filteredWords = tempWords.filter(w => w.category === state.currentCategory);
   }
   
   // Randomize list to keep it fresh every session
@@ -340,18 +354,24 @@ function renderBookmarks() {
     // Click word title to redirect to home dashboard and show full details
     miniCard.querySelector('.mini-title').addEventListener('click', () => {
       // Find filtered index or update list
-      const idx = state.filteredWords.findIndex(w => w.word === wordObj.word);
+      let idx = state.filteredWords.findIndex(w => w.word === wordObj.word);
       if (idx !== -1) {
         state.currentWordIndex = idx;
       } else {
-        // Fallback: reset filter to all to find it
+        // Fallback: reset plan and category filters to match the word's plan
+        state.currentPlan = wordObj.plan;
+        elements.planSelect.value = wordObj.plan;
+        localStorage.setItem('vocab_current_plan', wordObj.plan);
+        
         state.currentCategory = 'all';
         elements.filters.forEach(btn => {
           if (btn.dataset.category === 'all') btn.classList.add('active');
           else btn.classList.remove('active');
         });
+        
         filterVocabulary();
         state.currentWordIndex = state.filteredWords.findIndex(w => w.word === wordObj.word);
+        updateMasteryUI();
       }
 
       // Switch Tab to Dashboard
@@ -482,6 +502,47 @@ function setupEventListeners() {
 
   elements.spellingHintBtn.addEventListener('click', revealSpellingHintLetter);
   elements.quizRestartBtn.addEventListener('click', resetQuiz);
+
+  // Plan Selector Change
+  elements.planSelect.addEventListener('change', (e) => {
+    state.currentPlan = e.target.value;
+    localStorage.setItem('vocab_current_plan', state.currentPlan);
+    
+    // Refresh words and display
+    filterVocabulary();
+    renderDashboard();
+    renderFlashcards();
+    updateMasteryUI();
+    
+    if (quizState.active) {
+      resetQuiz();
+    }
+    showToast(`已切換為：${state.currentPlan === 'short' ? '短期核心' : state.currentPlan === 'medium' ? '中期進階' : '長期商務'}計畫`);
+  });
+
+  // Reset Progress for Current Plan
+  elements.resetProgressBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const planName = state.currentPlan === 'short' ? '短期核心' : state.currentPlan === 'medium' ? '中期進階' : '長期商務';
+    
+    if (confirm(`確定要清除【${planName}】計畫的熟練度進度嗎？`)) {
+      // Find all words in current plan and remove them from correct sets
+      const planWords = VOCAB_DATABASE.filter(w => w.plan === state.currentPlan).map(w => w.word);
+      
+      planWords.forEach(word => {
+        state.correctSpellingWords.delete(word);
+        state.correctQuizWords.delete(word);
+      });
+      
+      saveMastery();
+      updateMasteryUI();
+      showToast("已清除該計畫進度");
+      
+      if (quizState.active) {
+        resetQuiz();
+      }
+    }
+  });
 }
 
 // Transition helper for tabs
