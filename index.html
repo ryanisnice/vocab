@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VocabBooster | 您的生活與職場英文單字秘書</title>
+  <meta name="description" content="一個專為學習實用生活會話與職場英文單字設計的精緻網頁 App，提供單字發音、例句、拼字測驗與翻卡記憶等功能。">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- Ambient Animated Background -->
+  <div class="bg-decorations">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="glass-panel">
+      <div class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <h1>VocabBooster</h1>
+      </div>
+      <div class="user-status">
+        <div class="status-pill" id="streak-display">
+          <i class="fa-solid fa-fire"></i>
+          <span>連續學習 0 天</span>
+        </div>
+        <div class="status-pill success-pill" id="score-display">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>熟練度 0%</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="dashboard">
+        <i class="fa-solid fa-house"></i>
+        <span>今日單字</span>
+      </button>
+      <button class="tab-btn" data-tab="flashcards">
+        <i class="fa-solid fa-clone"></i>
+        <span>閃卡學習</span>
+      </button>
+      <button class="tab-btn" data-tab="quiz">
+        <i class="fa-solid fa-gamepad"></i>
+        <span>互動測驗</span>
+      </button>
+      <button class="tab-btn" data-tab="bookmarks">
+        <i class="fa-solid fa-bookmark"></i>
+        <span>個人生字</span>
+      </button>
+    </nav>
+
+    <!-- Category Filter (Affects dashboard, flashcards and quiz) -->
+    <div class="category-filter-container">
+      <button class="filter-btn active" data-category="all">全部單字</button>
+      <button class="filter-btn" data-category="conversation">生活會話</button>
+      <button class="filter-btn" data-category="workplace">職場英文</button>
+    </div>
+
+    <!-- MAIN PANELS -->
+
+    <!-- 1. Dashboard Tab -->
+    <section id="dashboard-panel" class="tab-panel active card-section">
+      <div class="vocab-card glass-panel" id="main-vocab-card">
+        <button class="bookmark-trigger" id="dashboard-bookmark-btn" title="加入生字簿">
+          <i class="fa-solid fa-bookmark"></i>
+        </button>
+        
+        <span class="category-badge badge-conversation" id="card-badge">生活會話</span>
+        
+        <div class="word-header">
+          <h2 class="word-title" id="card-word">collaborate</h2>
+          <span class="word-pos" id="card-pos">v.</span>
+        </div>
+        
+        <div class="phonetic-container">
+          <span id="card-phonetic">/kəˈlæbəreɪt/</span>
+          <button class="pronounce-btn" id="card-speak-btn" title="播放發音">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
+        </div>
+        
+        <div class="vocab-translation" id="card-translation">合作，協作</div>
+        <p class="vocab-definition" id="card-definition">To work jointly on an activity or project, especially to produce or create something.</p>
+        
+        <div class="examples-block">
+          <div class="section-label"><i class="fa-regular fa-lightbulb"></i> 實用例句</div>
+          <div id="card-examples-container">
+            <!-- Dynamic examples injected here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="control-actions">
+        <button class="btn" id="next-word-btn">
+          <span>下一個單字</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. Flashcards Tab -->
+    <section id="flashcards-panel" class="tab-panel">
+      <div class="flashcards-container">
+        <div class="perspective-wrapper" id="flashcard-wrapper">
+          <div class="flashcard-inner">
+            <!-- Front Face -->
+            <div class="flashcard-face flashcard-front glass-panel">
+              <span class="category-badge badge-conversation" id="fc-badge">生活會話</span>
+              <h2 class="word-title" id="fc-word">spontaneous</h2>
+              <span class="word-pos" id="fc-pos">adj.</span>
+              <div class="phonetic-container">
+                <span id="fc-phonetic">/spɒnˈteɪniəs/</span>
+              </div>
+              <div class="hint-indicator">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+                <span>點擊卡片翻面看中文</span>
+              </div>
+            </div>
+            <!-- Back Face -->
+            <div class="flashcard-face flashcard-back glass-panel">
+              <div class="vocab-translation" id="fc-translation">自發的，心血來潮的</div>
+              <p class="vocab-definition" id="fc-definition" style="margin-bottom: 1rem;">Performed or occurring as a result of a sudden inner impulse...</p>
+              
+              <div class="examples-block" style="text-align: left; width: 100%; max-height: 160px; overflow-y: auto;">
+                <div class="section-label" style="font-size: 0.75rem;"><i class="fa-regular fa-lightbulb"></i> 實用例句</div>
+                <div id="fc-examples-container">
+                  <!-- Example sentences injected here -->
+                </div>
+              </div>
+              
+              <div class="hint-indicator">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+                <span>點擊卡片回到正面</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-actions" style="width: 100%;">
+          <button class="btn btn-secondary" id="fc-prev-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>上一個</span>
+          </button>
+          <button class="btn" id="fc-next-btn">
+            <span>下一個</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Quiz Tab -->
+    <section id="quiz-panel" class="tab-panel">
+      <!-- Quiz Selection Menu -->
+      <div class="glass-panel" id="quiz-menu-view" style="padding: 2.5rem; text-align: center;">
+        <div class="result-icon"><i class="fa-solid fa-dumbbell"></i></div>
+        <h2 class="quiz-result-title" style="margin-bottom: 0.5rem;">單字鍛鍊場</h2>
+        <p class="quiz-question-prompt" style="margin-bottom: 2rem;">選擇一種測驗模式來檢測您的學習成果</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <button class="btn" id="start-choice-quiz-btn">
+            <i class="fa-solid fa-list-ul"></i>
+            <span>四選一單字選擇題</span>
+          </button>
+          <button class="btn btn-secondary" id="start-spelling-quiz-btn" style="border: 1px solid rgba(255,255,255,0.15)">
+            <i class="fa-solid fa-keyboard"></i>
+            <span>拼字填充挑戰</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Multiple Choice Quiz View -->
+      <div class="glass-panel" id="quiz-question-view" style="display: none; padding: 2rem;">
+        <div class="quiz-header">
+          <span class="quiz-score-display" id="quiz-counter">問題 1 / 5</span>
+          <span class="quiz-score-display" id="quiz-score">得分: 0</span>
+        </div>
+        <div class="quiz-progress-bar-bg">
+          <div class="quiz-progress-bar" id="quiz-progress"></div>
+        </div>
+
+        <div class="quiz-question-container">
+          <div class="quiz-question-word" id="quiz-q-word">collaborate</div>
+          <div class="quiz-question-prompt">請問這個單字的意思是？</div>
+        </div>
+
+        <div class="quiz-options" id="quiz-options-container">
+          <!-- Options injected dynamically -->
+        </div>
+
+        <button class="btn" id="quiz-next-btn" style="margin-top: 1.5rem; display: none;">
+          <span>下一題</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- Spelling Quiz View -->
+      <div class="glass-panel spelling-box" id="quiz-spelling-view" style="display: none;">
+        <div class="quiz-header">
+          <span class="quiz-score-display" id="spelling-counter">問題 1 / 5</span>
+          <span class="quiz-score-display" id="spelling-score">得分: 0</span>
+        </div>
+        <div class="quiz-progress-bar-bg">
+          <div class="quiz-progress-bar" id="spelling-progress"></div>
+        </div>
+
+        <div class="spelling-hint-sentence" id="spelling-hint-sentence">
+          We need to <span class="spelling-blank">c _ _ _ _ _ _ _ _ _ e</span> with other teams.
+        </div>
+        <div class="spelling-hint-zh" id="spelling-hint-zh">
+          中文翻譯例句：我們需要與其他團隊合作。
+        </div>
+
+        <div class="spelling-input-container">
+          <input type="text" class="spelling-input" id="spelling-input" autocomplete="off" placeholder="請輸入單字..." autofocus>
+        </div>
+
+        <div class="spelling-actions">
+          <button class="btn btn-secondary" id="spelling-hint-btn">
+            <i class="fa-solid fa-circle-question"></i>
+            <span>顯示提示</span>
+          </button>
+          <button class="btn" id="spelling-check-btn">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>檢查答案</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz Result View -->
+      <div class="glass-panel quiz-result-view" id="quiz-result-view" style="display: none;">
+        <div class="result-icon" id="result-icon-display"><i class="fa-solid fa-trophy"></i></div>
+        <h2 class="quiz-result-title" id="result-title">測驗完成！</h2>
+        <div class="quiz-result-stats" id="result-stats-text">
+          您的得分是 <span>80%</span> (答對 4 題 / 共 5 題)
+        </div>
+        <button class="btn" id="quiz-restart-btn">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>返回鍛鍊選單</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. Bookmarks Tab -->
+    <section id="bookmarks-panel" class="tab-panel">
+      <div class="bookmarks-welcome" id="bookmarks-empty-view">
+        <i class="fa-solid fa-bookmark"></i>
+        <h3>您的生字簿空空的</h3>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">在「今日單字」中點擊書籤圖示，即可將不熟的單字加到這裡隨時複習。</p>
+      </div>
+      <div class="bookmarks-grid" id="bookmarks-list-container">
+        <!-- Bookmark cards injected here -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Toast Notification Message -->
+  <div class="toast" id="toast-msg">
+    <i class="fa-solid fa-circle-info"></i>
+    <span>已加入生字簿</span>
+  </div>
+
+  <!-- Script dependencies -->
+  <script src="words.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
